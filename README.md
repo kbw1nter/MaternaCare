@@ -1,10 +1,10 @@
-# 🏥 MaternaCare - Sistema de Gestão de Maternidade
+# MaternaCare - Sistema de Gestão de Maternidade
 
 Sistema web desenvolvido para o gerenciamento de pacientes neonatais, alocação de leitos e registros clínicos em uma maternidade.
 
 Este projeto foi desenvolvido como requisito avaliativo para a disciplina de **Banco de Dados** do curso de Ciência da Computação.
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 O **MaternaCare** é uma aplicação completa que permite o controle do fluxo de uma maternidade, desde o nascimento do bebê até a alta, passando pelo controle de evoluções clínicas e vínculo com responsáveis.
 
@@ -15,7 +15,7 @@ O foco principal do projeto é a implementação prática de conceitos de Banco 
 - **Gatilhos (Triggers)** para validação de dados.
 - Consultas SQL complexas com JOINS.
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 - **Dashboard em Tempo Real:** Visualização de taxa de ocupação, total de internados e notificações recentes.
 - **Gestão de Pacientes (Bebês):** Cadastro completo, visualização de histórico e status.
@@ -24,14 +24,14 @@ O foco principal do projeto é a implementação prática de conceitos de Banco 
 - **Responsáveis:** Cadastro de familiares e vínculo N:N (Mãe/Pai) com os bebês.
 - **Sistema de Notificações:** Alertas automáticos no sistema ao realizar cadastros.
 
-## 🛠 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Back-end:** Python 3.9+, Flask.
 - **Banco de Dados:** MySQL (Driver: mysql-connector-python).
 - **Front-end:** HTML5, CSS3 (Tailwind CSS via CDN), JavaScript.
 - **IDE:** VS Code.
 
-## 🗄️ Estrutura do Banco de Dados
+## Estrutura do Banco de Dados
 
 O banco de dados `maternidade` conta com as seguintes estruturas principais:
 
