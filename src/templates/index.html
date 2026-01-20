@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block subtitle %}Resumo da Maternidade em tempo real{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total de Bebês</p>
+                <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ total_bebes }}</h3>
+            </div>
+            <div class="p-3 bg-pink-50 rounded-xl text-pink-600">
+                <i data-lucide="baby" class="w-6 h-6"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-green-600">
+            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+            <span>Atualizado agora</span>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Leitos Disponíveis</p>
+                <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ leitos_disponiveis }}</h3>
+            </div>
+            <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+                <i data-lucide="bed-double" class="w-6 h-6"></i>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-400">
+            Vagas no berçário
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Taxa de Ocupação</p>
+                <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ taxa_ocupacao }}%</h3>
+            </div>
+            <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
+                <i data-lucide="pie-chart" class="w-6 h-6"></i>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-purple-600 font-medium">
+            Capacidade do berçário
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-bold text-lg mb-4 text-gray-800">Bebês Recentes</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-gray-400 text-sm border-b border-gray-100">
+                        <th class="pb-3 font-medium">Nome</th>
+                        <th class="pb-3 font-medium">Nascimento</th>
+                        <th class="pb-3 font-medium">Peso</th>
+                        <th class="pb-3 font-medium">Quarto</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    {% for bebe in recentes %}
+                    <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition">
+                        <td class="py-4 font-medium text-gray-800 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xs font-bold">
+                                {{ bebe.nome[0] }}
+                            </div>
+                            {{ bebe.nome }}
+                        </td>
+                        <td class="py-4 text-gray-500">{{ bebe.data_nascimento }}</td>
+                        <td class="py-4 text-gray-500">{{ bebe.peso_nascimento }} kg</td>
+                        <td class="py-4">
+                            {% if bebe.numero_quarto %}
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">
+                                    Quarto {{ bebe.numero_quarto }}
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                                    Aguardando Leito
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-gray-400">Nenhum bebê registrado recentemente.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-bold text-lg mb-4 text-gray-800">Ações Rápidas</h3>
+        <div class="space-y-3">
+            <a href="/bebes/novo" class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-pink-500 hover:bg-pink-50 transition-all group cursor-pointer">
+                <div class="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-pink-200 flex items-center justify-center transition-colors">
+                    <i data-lucide="plus" class="w-5 h-5 text-gray-600 group-hover:text-pink-700"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-700 group-hover:text-pink-700">Novo Bebê</p>
+                    <p class="text-xs text-gray-400">Registrar nascimento</p>
+                </div>
+            </a>
+            
+            <a href="/registros/novo" class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all group cursor-pointer">
+                <div class="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-blue-200 flex items-center justify-center transition-colors">
+                    <i data-lucide="file-text" class="w-5 h-5 text-gray-600 group-hover:text-blue-700"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-700 group-hover:text-blue-700">Novo Registro</p>
+                    <p class="text-xs text-gray-400">Registrar prontuário</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaternaCare</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Nunito', 'sans-serif'],
+                        body: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#fdf2f8', /* Rosa bem clarinho */
+                        primary: '#db2777',    /* Rosa forte (Pink-600) */
+                        secondary: '#fce7f3',
+                        sidebar: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos globais para garantir a beleza */
+        body { font-family: 'Quicksand', sans-serif; background-color: #fdf2f8; color: #1f2937; }
+        h1, h2, h3 { font-family: 'Nunito', sans-serif; }
+        
+        /* Efeito no Menu Lateral */
+        .nav-item { transition: all 0.2s; }
+        .nav-item:hover { background-color: #fce7f3; color: #db2777; }
+        .nav-item.active { background-color: #db2777; color: white; box-shadow: 0 4px 14px 0 rgba(219, 39, 119, 0.39); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <aside class="fixed w-64 h-screen bg-white border-r border-gray-200 flex flex-col z-50">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center text-pink-600">
+                    <i data-lucide="heart"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-gray-800">MaternaCare</h1>
+                    <p class="text-xs text-gray-500">Gestão de Maternidade</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="/" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="/bebes" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
+                <i data-lucide="baby" class="w-5 h-5"></i>
+                <span>Bebês</span>
+            </a>
+
+            <a href="/responsaveis" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span>Responsáveis</span>
+            </a>
+
+            <a href="/leitos" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
+                <i data-lucide="bed-double" class="w-5 h-5"></i>
+                <span>Berçário</span>
+            </a>
+
+            <a href="/registros" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
+                <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                <span>Registros Clínicos</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-100">
+            <button class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500 hover:text-red-500 w-full transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="ml-64 flex-1 p-8">
+        
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">{% block title %}Visão Geral{% endblock %}</h2>
+                <p class="text-gray-500">{% block subtitle %}Bem-vindo ao sistema de gestão{% endblock %}</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-gray-400 hover:text-pink-600 transition-colors relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
+                </button>
+                
+                <div class="flex items-center gap-3 pl-4 border-l">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-gray-700">Dr. Admin</p>
+                        <p class="text-xs text-gray-500">Pediatria</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

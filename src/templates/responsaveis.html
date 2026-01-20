@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Responsáveis{% endblock %}
+{% block subtitle %}Gerenciamento de familiares e responsáveis legais{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex gap-4">
+    <input type="text" placeholder="Buscar responsável..." class="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:border-pink-500">
+    <a href="/responsaveis/novo" class="bg-pink-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-pink-700 transition flex items-center gap-2">
+        <i data-lucide="plus"></i> Novo Responsável
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for resp in responsaveis %}
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition relative group">
+        
+        <a href="/responsaveis/excluir/{{ resp.id_responsavel }}" 
+           onclick="return confirm('Tem certeza que deseja excluir este responsável?')"
+           class="absolute top-4 right-4 text-gray-300 hover:text-red-500 p-2 transition-colors"
+           title="Excluir Responsável">
+            <i data-lucide="trash-2" class="w-5 h-5"></i>
+        </a>
+
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800">{{ resp.nome }}</h3>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                        {{ resp.parentesco or 'Sem vínculo' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-3 text-sm text-gray-600 mb-6">
+            <div class="flex items-center gap-2">
+                <i data-lucide="credit-card" class="w-4 h-4 text-gray-400"></i> {{ resp.cpf }}
+            </div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i> {{ resp.telefone }}
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-50 text-sm">
+            <span class="text-gray-400">Responsável por:</span>
+            
+            {% if resp.nome_bebe %}
+                <span class="text-pink-600 font-medium">{{ resp.nome_bebe }}</span>
+            {% else %}
+                <span class="text-gray-400 italic">Não vinculado</span>
+                <a href="/responsaveis/vincular/{{ resp.id_responsavel }}" class="ml-2 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                    (Vincular Agora)
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-3 text-center py-10 text-gray-400">
+        Nenhum responsável cadastrado ainda.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Bebês Internados{% endblock %}
+{% block subtitle %}Gerenciamento de pacientes do berçário{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="font-bold text-lg text-gray-800">Lista de Pacientes</h3>
+        
+        <a href="/bebes/novo" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Novo Bebê
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-gray-100">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Nome</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Nascimento</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Peso</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Localização</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Ações</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for bebe in bebes %}
+                <tr class="hover:bg-pink-50/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xs mr-3">
+                                {{ bebe.nome[0] }}
+                            </div>
+                            <div class="text-sm font-medium text-gray-900">{{ bebe.nome }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ bebe.data_nascimento }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ bebe.peso_nascimento }} kg
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if bebe.numero_quarto %}
+                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                Quarto {{ bebe.numero_quarto }}
+                            </span>
+                        {% else %}
+                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                                Sem leito
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="/registros?id_bebe={{ bebe.id_bebe }}" class="text-pink-600 hover:text-pink-900 mr-3">Prontuário</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-400">
+                        Nenhum bebê cadastrado. Clique no botão acima para adicionar.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
