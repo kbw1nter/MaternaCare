@@ -43,30 +43,32 @@ def index():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
-    #total de bebês
-    cursor.execute("SELECT COUNT(*) as total FROM Bebe")
+    # total de bebês
+    cursor.execute("SELECT COUNT(*) as total FROM Bebe WHERE status = 'Ativo'")
     total_bebes = cursor.fetchone()['total']
     
-    #dados de leitos 
+    # dados de leitos 
     cursor.execute("SELECT COUNT(*) as total FROM Leito")
     total_leitos = cursor.fetchone()['total']
     
-    cursor.execute("SELECT COUNT(*) as ocupados FROM Bebe WHERE id_leito IS NOT NULL")
+    #conta leitos ocupados 
+    cursor.execute("SELECT COUNT(*) as ocupados FROM Bebe WHERE id_leito IS NOT NULL AND status = 'Ativo'")
     leitos_ocupados = cursor.fetchone()['ocupados']
     
     #cálculos dos leitos
     leitos_disponiveis = total_leitos - leitos_ocupados
     
-    # cálculo da taxa de ocupação
+    #cálculo da taxa de ocupação
     taxa_ocupacao = 0
     if total_leitos > 0:
         taxa_ocupacao = int((leitos_ocupados / total_leitos) * 100)
     
-    #bebês recentes
+    #bebês recentes (ativos, sem contar os que já tiveram alta, ordenados por nascimento)
     cursor.execute("""
         SELECT b.*, l.numero_quarto 
         FROM Bebe b 
         LEFT JOIN Leito l ON b.id_leito = l.id_leito 
+        WHERE b.status = 'Ativo'
         ORDER BY b.data_nascimento DESC 
         LIMIT 5
     """)
@@ -81,7 +83,6 @@ def index():
                          recentes=recentes)
 
 # rota pra listar bebês
-# --- ROTA: LISTA DE BEBÊS (Apenas Ativos) ---
 @app.route('/bebes')
 def lista_bebes():
     conn = get_db_connection()
@@ -131,8 +132,6 @@ def novo_bebe():
         conn.close()
         return redirect(url_for('lista_bebes'))
     
-    # --- PARTE DO GET (Quando você abre a página no navegador) ---
-    
     cursor.execute("SELECT * FROM Leito WHERE id_leito NOT IN (SELECT id_leito FROM Bebe WHERE id_leito IS NOT NULL)")
     leitos_livres = cursor.fetchall()
     
@@ -150,7 +149,7 @@ def lista_responsaveis():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # O WHERE r.status = 'Ativo' esconde quem já teve alta!
+    # O WHERE r.status = 'Ativo' esconde quem já teve alta
     cursor.execute("""
         SELECT r.*, b.nome as nome_bebe, rb.parentesco
         FROM Responsavel r
