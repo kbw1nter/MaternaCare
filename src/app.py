@@ -279,5 +279,39 @@ def excluir_responsavel(id_responsavel):
     conn.close()
     return redirect('/responsaveis')
 
+# --- ROTA: EXCLUIR BEBÊ ---
+@app.route('/bebes/excluir/<int:id_bebe>')
+def excluir_bebe(id_bebe):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        # busca o nome para a notificação
+        cursor.execute("SELECT nome FROM Bebe WHERE id_bebe = %s", (id_bebe,))
+        resultado = cursor.fetchone()
+        nome_bebe = resultado[0] if resultado else "Bebê"
+
+        # remove os vínculos com responsáveis
+        cursor.execute("DELETE FROM Responsavel_Bebe WHERE id_bebe = %s", (id_bebe,))
+        
+        # remove os registros clínicos/evoluções do bebê
+        cursor.execute("DELETE FROM Evolucao_Clinica WHERE id_bebe = %s", (id_bebe,))
+        
+        # delet o bebê
+        cursor.execute("DELETE FROM Bebe WHERE id_bebe = %s", (id_bebe,))
+        
+        conn.commit()
+        
+        # cria uma notificação avisando que foi apagado
+        criar_notificacao(f"Registro do paciente {nome_bebe} foi excluído.")
+        
+    except Exception as e:
+        print(f"Erro ao excluir bebê: {e}")
+        conn.rollback() #cancela a operação se der erro
+    finally:
+        conn.close()
+        
+    return redirect('/bebes')
+
 if __name__ == '__main__':
     app.run(debug=True)

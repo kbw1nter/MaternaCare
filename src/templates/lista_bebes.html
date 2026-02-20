@@ -54,8 +54,17 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="/registros?id_bebe={{ bebe.id_bebe }}" class="text-pink-600 hover:text-pink-900 mr-3">Prontuário</a>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-4">
+                        <a href="/registros?id_bebe={{ bebe.id_bebe }}" class="text-pink-600 hover:text-pink-800 font-bold">
+                            Prontuário
+                        </a>
+                        
+                        <a href="/bebes/excluir/{{ bebe.id_bebe }}" 
+                           onclick="return confirm('ATENÇÃO: Isso apagará definitivamente o bebê, o histórico clínico dele e os vínculos com os responsáveis. Tem certeza que deseja excluir?')"
+                           class="text-gray-400 hover:text-red-500 transition-colors"
+                           title="Excluir Paciente">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </a>
                     </td>
                 </tr>
                 {% else %}
