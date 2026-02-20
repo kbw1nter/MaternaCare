@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico e Arquivo{% endblock %}
+{% block subtitle %}Registro de altas e exclusões do sistema{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-bold text-lg mb-4 text-gray-800 flex items-center gap-2">
+            <i data-lucide="baby" class="text-pink-500"></i> Histórico de Pacientes
+        </h3>
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                    <th class="px-4 py-2">Nome</th>
+                    <th class="px-4 py-2">Data Saída</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Vínculo Familiar</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for bebe in bebes %}
+                <tr>
+                    <td class="px-4 py-3 font-medium">{{ bebe.nome }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ bebe.data_saida }}</td>
+                    <td class="px-4 py-3">
+                        {% if bebe.status == 'Alta' %}
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Alta</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Excluído</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">{{ bebe.nome_responsavel or 'Nenhum' }} ({{ bebe.parentesco or '-' }})</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center py-4 text-gray-400">Nenhum registro.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-bold text-lg mb-4 text-gray-800 flex items-center gap-2">
+            <i data-lucide="users" class="text-blue-500"></i> Histórico de Responsáveis
+        </h3>
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                    <th class="px-4 py-2">Nome</th>
+                    <th class="px-4 py-2">CPF</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Bebê Vinculado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for resp in responsaveis %}
+                <tr>
+                    <td class="px-4 py-3 font-medium">{{ resp.nome }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ resp.cpf }}</td>
+                    <td class="px-4 py-3">
+                        {% if resp.status == 'Alta' %}
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Alta</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Excluído</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">{{ resp.nome_bebe or 'Nenhum' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center py-4 text-gray-400">Nenhum registro.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

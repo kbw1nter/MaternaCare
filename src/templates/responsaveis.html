@@ -15,16 +15,25 @@
     {% for resp in responsaveis %}
     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition relative group">
         
-        <a href="/responsaveis/excluir/{{ resp.id_responsavel }}" 
-           onclick="return confirm('Tem certeza que deseja excluir este responsável?')"
-           class="absolute top-4 right-4 text-gray-300 hover:text-red-500 p-2 transition-colors"
-           title="Excluir Responsável">
-            <i data-lucide="trash-2" class="w-5 h-5"></i>
-        </a>
+        <div class="absolute top-4 right-4 flex gap-2">
+            <a href="/responsaveis/acao/{{ resp.id_responsavel }}/alta" 
+               onclick="return confirm('Deseja dar ALTA para este responsável? Ele irá para o histórico.')"
+               class="text-gray-300 hover:text-green-500 p-2 transition-colors"
+               title="Dar Alta">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </a>
 
-        <div class="flex justify-between items-start mb-4">
+            <a href="/responsaveis/acao/{{ resp.id_responsavel }}/excluido" 
+               onclick="return confirm('Mover responsável para a lixeira/histórico?')"
+               class="text-gray-300 hover:text-red-500 p-2 transition-colors"
+               title="Excluir Responsável">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+            </a>
+        </div>
+
+        <div class="flex justify-between items-start mb-4 pr-16">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                     <i data-lucide="user" class="w-6 h-6"></i>
                 </div>
                 <div>
