@@ -81,6 +81,7 @@ def index():
                          recentes=recentes)
 
 # rota pra listar bebês
+# --- ROTA: LISTA DE BEBÊS (Apenas Ativos) ---
 @app.route('/bebes')
 def lista_bebes():
     conn = get_db_connection()
@@ -129,6 +130,8 @@ def novo_bebe():
         conn.commit()
         conn.close()
         return redirect(url_for('lista_bebes'))
+    
+    # --- PARTE DO GET (Quando você abre a página no navegador) ---
     
     cursor.execute("SELECT * FROM Leito WHERE id_leito NOT IN (SELECT id_leito FROM Bebe WHERE id_leito IS NOT NULL)")
     leitos_livres = cursor.fetchall()
