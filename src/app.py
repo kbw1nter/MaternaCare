@@ -43,18 +43,18 @@ def index():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # 1. total de bebês
+    #total de bebês
     cursor.execute("SELECT COUNT(*) as total FROM Bebe")
     total_bebes = cursor.fetchone()['total']
     
-    # 2. dados de leitos 
+    #dados de leitos 
     cursor.execute("SELECT COUNT(*) as total FROM Leito")
     total_leitos = cursor.fetchone()['total']
     
     cursor.execute("SELECT COUNT(*) as ocupados FROM Bebe WHERE id_leito IS NOT NULL")
     leitos_ocupados = cursor.fetchone()['ocupados']
     
-    # 3. cálculos finais
+    #cálculos dos leitos
     leitos_disponiveis = total_leitos - leitos_ocupados
     
     # cálculo da taxa de ocupação
@@ -62,7 +62,7 @@ def index():
     if total_leitos > 0:
         taxa_ocupacao = int((leitos_ocupados / total_leitos) * 100)
     
-    # 4. bebês recentes
+    #bebês recentes
     cursor.execute("""
         SELECT b.*, l.numero_quarto 
         FROM Bebe b 
@@ -85,10 +85,14 @@ def index():
 def lista_bebes():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # O WHERE b.status = 'Ativo' esconde quem já teve alta
     cursor.execute("""
-        SELECT b.*, l.numero_quarto, l.numero_berco 
+        SELECT b.*, l.numero_quarto, l.numero_berco
         FROM Bebe b 
-        LEFT JOIN Leito l ON b.id_leito = l.id_leito
+        LEFT JOIN Leito l ON b.id_leito = l.id_leito 
+        WHERE b.status = 'Ativo'
+        ORDER BY b.nome
     """)
     bebes = cursor.fetchall()
     conn.close()
@@ -98,33 +102,58 @@ def lista_bebes():
 def novo_bebe():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
     if request.method == 'POST':
+        #pega os dados do bebê
         nome = request.form['nome']
         peso = request.form['peso']
         altura = request.form['altura']
         id_leito = request.form.get('id_leito')
-        cursor.execute("INSERT INTO Bebe (nome, data_nascimento, peso_nascimento, altura_nascimento, id_leito) VALUES (%s, NOW(), %s, %s, %s)", (nome, peso, altura, id_leito if id_leito else None))
+        
+        #pga os dados do responsável 
+        id_responsavel = request.form.get('id_responsavel')
+        parentesco = request.form.get('parentesco')
+        
+        #insere o bebê
+        cursor.execute("""
+            INSERT INTO Bebe (nome, data_nascimento, peso_nascimento, altura_nascimento, id_leito, status) 
+            VALUES (%s, NOW(), %s, %s, %s, 'Ativo')
+        """, (nome, peso, altura, id_leito if id_leito else None))
+        
+        #pega o ID do bebê que acabou de nascer e salva o vínculo com a mãe
+        id_bebe_novo = cursor.lastrowid
+        if id_responsavel and parentesco:
+            cursor.execute("INSERT INTO Responsavel_Bebe (id_responsavel, id_bebe, parentesco) VALUES (%s, %s, %s)", 
+                           (id_responsavel, id_bebe_novo, parentesco))
+            
         conn.commit()
         conn.close()
         return redirect(url_for('lista_bebes'))
     
     cursor.execute("SELECT * FROM Leito WHERE id_leito NOT IN (SELECT id_leito FROM Bebe WHERE id_leito IS NOT NULL)")
     leitos_livres = cursor.fetchall()
+    
+    cursor.execute("SELECT id_responsavel, nome, cpf FROM Responsavel WHERE status = 'Ativo'")
+    responsaveis_lista = cursor.fetchall()
+    
     conn.close()
-    return render_template('form_bebe.html', leitos=leitos_livres)
+    
+    # envia essa lista para o HTML
+    return render_template('form_bebe.html', leitos=leitos_livres, responsaveis=responsaveis_lista)
 
-# rota pra listar responsáveis
+#rota de lista de responsáveis
 @app.route('/responsaveis')
 def lista_responsaveis():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # mudamos de JOIN pra LEFT JOIN pra trazer quem não tem bebê ainda
+    # O WHERE r.status = 'Ativo' esconde quem já teve alta!
     cursor.execute("""
         SELECT r.*, b.nome as nome_bebe, rb.parentesco
         FROM Responsavel r
         LEFT JOIN Responsavel_Bebe rb ON r.id_responsavel = rb.id_responsavel
         LEFT JOIN Bebe b ON rb.id_bebe = b.id_bebe
+        WHERE r.status = 'Ativo'
     """)
     responsaveis = cursor.fetchall()
     conn.close()
@@ -205,7 +234,7 @@ def novo_registro():
             INSERT INTO Evolucao_Clinica (id_bebe, data_hora, descricao, peso_atual, id_funcionario) 
             VALUES (%s, NOW(), %s, %s, 1)
         """, (id_bebe, descricao, peso_atual))
-        # nota: id_funcionario = 1 fixo por enquanto, pois não temos login
+        #id_funcionario = 1 fixo por enquanto, pois não temos login
         
         conn.commit()
         conn.close()
@@ -217,7 +246,7 @@ def novo_registro():
     conn.close()
     return render_template('form_registro.html', bebes=bebes)
 
-# rota pra criar novo responsável
+# rota de novo responsável
 @app.route('/responsaveis/novo', methods=('GET', 'POST'))
 def novo_responsavel():
     if request.method == 'POST':
@@ -228,9 +257,17 @@ def novo_responsavel():
         
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Responsavel (nome, cpf, telefone, endereco) VALUES (%s, %s, %s, %s)", 
-                       (nome, cpf, telefone, endereco))
+        
+        cursor.execute("""
+            INSERT INTO Responsavel (nome, cpf, telefone, endereco, status) 
+            VALUES (%s, %s, %s, %s, 'Ativo')
+        """, (nome, cpf, telefone, endereco))
+        
         conn.commit()
+        
+        # dispara a notificação
+        criar_notificacao(f"Novo responsável cadastrado: {nome}")
+        
         conn.close()
         return redirect(url_for('lista_responsaveis'))
     
@@ -263,21 +300,68 @@ def vincular_responsavel(id_responsavel):
     conn.close()
     return render_template('form_vinculo.html', responsavel=responsavel, bebes=bebes)
 
-# rota pra excluir responsável
-@app.route('/responsaveis/excluir/<int:id_responsavel>')
-def excluir_responsavel(id_responsavel):
+#rota para dar alta ou excluir 
+@app.route('/bebes/acao/<int:id_bebe>/<acao>')
+def acao_bebe(id_bebe, acao):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # muda o status do bebê para alta, tira do leito e marca a data
+    cursor.execute("UPDATE Bebe SET status = %s, id_leito = NULL, data_saida = NOW() WHERE id_bebe = %s", (acao.capitalize(), id_bebe))
+    conn.commit()
+    criar_notificacao(f"Bebê marcado como: {acao}")
+    conn.close()
+    return redirect('/bebes')
+
+@app.route('/responsaveis/acao/<int:id_responsavel>/<acao>')
+def acao_responsavel(id_responsavel, acao):
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # primeiro removemos os vínculos desse responsável
-    cursor.execute("DELETE FROM Responsavel_Bebe WHERE id_responsavel = %s", (id_responsavel,))
+    #da alta para o responsável
+    cursor.execute("UPDATE Responsavel SET status = %s, data_saida = NOW() WHERE id_responsavel = %s", (acao.capitalize(), id_responsavel))
     
-    # depois removemos a pessoa
-    cursor.execute("DELETE FROM Responsavel WHERE id_responsavel = %s", (id_responsavel,))
+    #da alta para os bebês vinculados a ele e libera os berços
+    cursor.execute("""
+        UPDATE Bebe 
+        SET status = %s, id_leito = NULL, data_saida = NOW() 
+        WHERE id_bebe IN (SELECT id_bebe FROM Responsavel_Bebe WHERE id_responsavel = %s)
+    """, (acao.capitalize(), id_responsavel))
     
     conn.commit()
+    criar_notificacao(f"Responsável e seus bebês marcados como: {acao}")
     conn.close()
     return redirect('/responsaveis')
+
+#pagina de historico 
+@app.route('/historico')
+def historico():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    #busca os bebês que tiveram alta
+    cursor.execute("""
+        SELECT b.*, rb.parentesco, r.nome as nome_responsavel
+        FROM Bebe b
+        LEFT JOIN Responsavel_Bebe rb ON b.id_bebe = rb.id_bebe
+        LEFT JOIN Responsavel r ON rb.id_responsavel = r.id_responsavel
+        WHERE b.status IN ('Alta', 'Excluido')
+        ORDER BY b.data_saida DESC
+    """)
+    bebes_hist = cursor.fetchall()
+    
+    #busca os responsáveis que tiveram alta
+    cursor.execute("""
+        SELECT r.*, rb.parentesco, b.nome as nome_bebe
+        FROM Responsavel r
+        LEFT JOIN Responsavel_Bebe rb ON r.id_responsavel = rb.id_responsavel
+        LEFT JOIN Bebe b ON rb.id_bebe = b.id_bebe
+        WHERE r.status IN ('Alta', 'Excluido')
+        ORDER BY r.data_saida DESC
+    """)
+    resp_hist = cursor.fetchall()
+    
+    conn.close()
+    return render_template('historico.html', bebes=bebes_hist, responsaveis=resp_hist)
 
 if __name__ == '__main__':
     app.run(debug=True)

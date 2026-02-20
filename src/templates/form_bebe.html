@@ -27,12 +27,41 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Alocar Leito (Opcional)</label>
                 <select name="id_leito" class="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:outline-none bg-white">
-                    <option value="">-- Selecione um berço --</option>
+                    <option value=""> Selecione um berço </option>
                     {% for leito in leitos %}
                     <option value="{{ leito.id_leito }}">Quarto {{ leito.numero_quarto }} - Berço {{ leito.numero_berco }}</option>
                     {% endfor %}
                 </select>
             </div>
+
+            <div class="p-5 bg-pink-50 rounded-xl border border-pink-100 mt-6">
+                <h4 class="text-sm font-bold text-pink-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4"></i> Vínculo Familiar (Obrigatório)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o Responsável</label>
+                        <select name="id_responsavel" required class="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-pink-500 bg-white">
+                            <option value=""> Selecione uma pessoa </option>
+                            {% for resp in responsaveis %}
+                            <option value="{{ resp.id_responsavel }}">{{ resp.nome }} (CPF: {{ resp.cpf }})</option>
+                            {% endfor %}
+                        </select>
+                        <p class="text-xs text-gray-500 mt-2">* O responsável deve ser cadastrado primeiro.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Parentesco</label>
+                        <select name="parentesco" required class="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-pink-500 bg-white">
+                            <option value="Mãe">Mãe</option>
+                            <option value="Pai">Pai</option>
+                            <option value="Avó">Avó</option>
+                            <option value="Avô">Avô</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="mt-8 flex items-center justify-end gap-4">
