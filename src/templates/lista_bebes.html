@@ -55,16 +55,26 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-4">
-                        <a href="/registros?id_bebe={{ bebe.id_bebe }}" class="text-pink-600 hover:text-pink-800 font-bold">
-                            Prontuário
+                        
+                        <a href="/registros?id_bebe={{ bebe.id_bebe }}" class="text-pink-600 hover:text-pink-800 font-bold flex items-center gap-1" title="Acessar Prontuário">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Prontuário
                         </a>
                         
-                        <a href="/bebes/excluir/{{ bebe.id_bebe }}" 
-                           onclick="return confirm('ATENÇÃO: Isso apagará definitivamente o bebê, o histórico clínico dele e os vínculos com os responsáveis. Tem certeza que deseja excluir?')"
-                           class="text-gray-400 hover:text-red-500 transition-colors"
-                           title="Excluir Paciente">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </a>
+                        <div class="flex items-center gap-2 border-l pl-4 border-gray-200">
+                            <a href="/bebes/acao/{{ bebe.id_bebe }}/alta" 
+                               onclick="return confirm('Deseja dar ALTA para este bebê? Ele irá para o histórico e o berço será liberado.')" 
+                               class="text-gray-400 hover:text-green-500 transition-colors" 
+                               title="Dar Alta">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </a>
+
+                            <a href="/bebes/acao/{{ bebe.id_bebe }}/excluido" 
+                               onclick="return confirm('Tem certeza? Isso moverá o bebê para a lixeira/histórico.')"
+                               class="text-gray-400 hover:text-red-500 transition-colors"
+                               title="Excluir Paciente">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 {% else %}
