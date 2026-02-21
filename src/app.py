@@ -64,8 +64,8 @@ def index():
         taxa_ocupacao = int((leitos_ocupados / total_leitos) * 100)
     
     #bebês recentes (ativos, sem contar os que já tiveram alta, ordenados por nascimento)
-    cursor.execute("""
-        SELECT b.*, l.numero_quarto 
+        cursor.execute("""
+        SELECT b.*, l.numero_berco
         FROM Bebe b 
         LEFT JOIN Leito l ON b.id_leito = l.id_leito 
         WHERE b.status = 'Ativo'
@@ -90,7 +90,7 @@ def lista_bebes():
     
     # O WHERE b.status = 'Ativo' esconde quem já teve alta
     cursor.execute("""
-        SELECT b.*, l.numero_quarto, l.numero_berco
+        SELECT b.*, l.numero_berco
         FROM Bebe b 
         LEFT JOIN Leito l ON b.id_leito = l.id_leito 
         WHERE b.status = 'Ativo'
