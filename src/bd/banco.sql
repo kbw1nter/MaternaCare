@@ -127,6 +127,10 @@ INSERT INTO Responsavel_Bebe (id_responsavel, id_bebe, parentesco) VALUES (1, 1,
 INSERT INTO Evolucao_Clinica (id_bebe, id_funcionario, descricao, peso_atual) VALUES 
 (1, 1, 'Bebê estável, amamentando bem.', 3.400);
 
+-- teste inserindo bebê no neonatal
+INSERT INTO Bebe (nome, data_nascimento, peso_nascimento, altura_nascimento, id_leito, status) 
+VALUES ('Bebê Prematuro (Teste)', NOW(), 2.100, 42.0, 9, 'Ativo');
+
 -- consultas de exemplo
 
 -- consulta 1: listagem simples de bebês
@@ -162,3 +166,7 @@ FROM Bebe b
 JOIN Leito l ON b.id_leito = l.id_leito
 JOIN Quarto q ON l.id_quarto = q.id_quarto
 WHERE q.tipo = 'UTI Neonatal';
+
+-- teste de trigger
+INSERT INTO Evolucao_Clinica (id_bebe, id_funcionario, data_hora, descricao, peso_atual) 
+VALUES (1, 1, '2020-01-01 10:00:00', 'Tentativa de fraude na data', 3.000);

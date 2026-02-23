@@ -243,7 +243,7 @@ def novo_registro():
         return redirect(url_for('lista_registros'))
     
     # busca bebês para preencher o select
-    cursor.execute("SELECT b.id_bebe, b.nome, l.numero_quarto FROM Bebe b LEFT JOIN Leito l ON b.id_leito = l.id_leito")
+    cursor.execute("SELECT b.id_bebe, b.nome, q.numero_quarto FROM Bebe b LEFT JOIN Leito l ON b.id_leito = l.id_leito LEFT JOIN Quarto q ON l.id_quarto = q.id_quarto")
     bebes = cursor.fetchall()
     conn.close()
     return render_template('form_registro.html', bebes=bebes)
