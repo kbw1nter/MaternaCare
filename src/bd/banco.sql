@@ -1,3 +1,4 @@
+-- Active: 1765237773821@@127.0.0.1@3306@mysql
 DROP DATABASE IF EXISTS maternidade;
 CREATE DATABASE maternidade;
 USE maternidade;

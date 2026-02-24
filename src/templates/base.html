@@ -67,9 +67,9 @@
                 <span>Bebês</span>
             </a>
 
-            <a href="/historico" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition-all font-medium">
+            <a href="/historico" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500 hover:bg-pink-50 hover:text-pink-600 transition-all">
                 <i data-lucide="archive" class="w-5 h-5"></i>
-                Histórico de Altas
+                <span>Histórico de Altas</span>
             </a>
             
             <a href="/responsaveis" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
@@ -105,10 +105,42 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 text-gray-400 hover:text-pink-600 transition-colors relative">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
-                </button>
+                
+                <div class="relative">
+                    <button onclick="toggleNotificacoes()" class="p-2 text-gray-400 hover:text-pink-600 transition-colors relative focus:outline-none">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        
+                        {% if qtd_nao_lidas > 0 %}
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full animate-ping"></span>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
+                        {% endif %}
+                    </button>
+                
+                    <div id="janela-notificacoes" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                        <div class="p-3 bg-pink-50 border-b border-pink-100 flex justify-between items-center">
+                            <h3 class="font-bold text-gray-700 text-sm">Notificações</h3>
+                            <span class="text-xs text-pink-600 font-semibold bg-pink-100 px-2 py-0.5 rounded-full">{{ qtd_nao_lidas }} novas</span>
+                        </div>
+                
+                        <div class="max-h-64 overflow-y-auto">
+                            {% if notificacoes_topo %}
+                                {% for n in notificacoes_topo %}
+                                <div class="p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <p class="text-sm text-gray-600 leading-tight">{{ n.mensagem }}</p>
+                                    <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                                        <i data-lucide="clock" class="w-3 h-3"></i>
+                                        {{ n.data_hora }}
+                                    </p>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="p-6 text-center text-gray-400 text-sm">
+                                    <p>Tudo calmo por aqui.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="flex items-center gap-3 pl-4 border-l">
                     <div class="text-right hidden sm:block">
@@ -128,7 +160,25 @@
     </main>
 
     <script>
+        // inicializa os ícones do lucide
         lucide.createIcons();
+
+        // função para abrir/fechar a janelinha
+        function toggleNotificacoes() {
+            const menu = document.getElementById('janela-notificacoes');
+            menu.classList.toggle('hidden');
+        }
+
+        //fecha a janelinha se clicar fora dela
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('janela-notificacoes');
+            const btn = document.querySelector('button[onclick="toggleNotificacoes()"]');
+            
+            // se o menu existir, e o clique for fora do menu e do botão, e o menu estiver aberto, fecha o menu
+            if (menu && !menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
