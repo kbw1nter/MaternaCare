@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
@@ -20,8 +19,8 @@
                         body: ['Quicksand', 'sans-serif'],
                     },
                     colors: {
-                        background: '#fdf2f8', /* Rosa bem clarinho */
-                        primary: '#db2777',    /* Rosa forte (Pink-600) */
+                        background: '#fdf2f8', 
+                        primary: '#db2777',    
                         secondary: '#fce7f3',
                         sidebar: '#ffffff',
                     }
@@ -31,11 +30,8 @@
     </script>
 
     <style>
-        /* Estilos globais para garantir a beleza */
         body { font-family: 'Quicksand', sans-serif; background-color: #fdf2f8; color: #1f2937; }
         h1, h2, h3 { font-family: 'Nunito', sans-serif; }
-        
-        /* Efeito no Menu Lateral */
         .nav-item { transition: all 0.2s; }
         .nav-item:hover { background-color: #fce7f3; color: #db2777; }
         .nav-item.active { background-color: #db2777; color: white; box-shadow: 0 4px 14px 0 rgba(219, 39, 119, 0.39); }
@@ -61,27 +57,22 @@
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Dashboard</span>
             </a>
-            
             <a href="/bebes" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
                 <i data-lucide="baby" class="w-5 h-5"></i>
                 <span>Bebês</span>
             </a>
-
             <a href="/historico" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500 hover:bg-pink-50 hover:text-pink-600 transition-all">
                 <i data-lucide="archive" class="w-5 h-5"></i>
                 <span>Histórico de Altas</span>
             </a>
-            
             <a href="/responsaveis" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span>Responsáveis</span>
             </a>
-
             <a href="/leitos" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
                 <i data-lucide="bed-double" class="w-5 h-5"></i>
                 <span>Berçário</span>
             </a>
-
             <a href="/registros" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-500">
                 <i data-lucide="clipboard-list" class="w-5 h-5"></i>
                 <span>Registros Clínicos</span>
@@ -111,15 +102,15 @@
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         
                         {% if qtd_nao_lidas > 0 %}
-                            <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full animate-ping"></span>
-                            <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
+                            <span class="badge-notificacao absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full animate-ping"></span>
+                            <span class="badge-notificacao absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
                         {% endif %}
                     </button>
                 
                     <div id="janela-notificacoes" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                         <div class="p-3 bg-pink-50 border-b border-pink-100 flex justify-between items-center">
                             <h3 class="font-bold text-gray-700 text-sm">Notificações</h3>
-                            <span class="text-xs text-pink-600 font-semibold bg-pink-100 px-2 py-0.5 rounded-full">{{ qtd_nao_lidas }} novas</span>
+                            <span class="badge-notificacao text-xs text-pink-600 font-semibold bg-pink-100 px-2 py-0.5 rounded-full">{{ qtd_nao_lidas }} novas</span>
                         </div>
                 
                         <div class="max-h-64 overflow-y-auto">
@@ -160,21 +151,23 @@
     </main>
 
     <script>
-        // inicializa os ícones do lucide
         lucide.createIcons();
 
-        // função para abrir/fechar a janelinha
         function toggleNotificacoes() {
             const menu = document.getElementById('janela-notificacoes');
             menu.classList.toggle('hidden');
+
+            // CÓDIGO NOVO: Pega todos os itens com a classe 'badge-notificacao' e esconde
+            const badges = document.querySelectorAll('.badge-notificacao');
+            badges.forEach(badge => {
+                badge.classList.add('hidden');
+            });
         }
 
-        //fecha a janelinha se clicar fora dela
         window.addEventListener('click', function(e) {
             const menu = document.getElementById('janela-notificacoes');
             const btn = document.querySelector('button[onclick="toggleNotificacoes()"]');
             
-            // se o menu existir, e o clique for fora do menu e do botão, e o menu estiver aberto, fecha o menu
             if (menu && !menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
                 menu.classList.add('hidden');
             }

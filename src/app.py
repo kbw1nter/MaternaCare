@@ -90,9 +90,10 @@ def lista_bebes():
     
     # O WHERE b.status = 'Ativo' esconde quem já teve alta
     cursor.execute("""
-        SELECT b.*, l.numero_berco
+        SELECT b.*, l.numero_berco, q.numero_quarto
         FROM Bebe b 
         LEFT JOIN Leito l ON b.id_leito = l.id_leito 
+        LEFT JOIN Quarto q ON l.id_quarto = q.id_quarto
         WHERE b.status = 'Ativo'
         ORDER BY b.nome
     """)
@@ -169,19 +170,18 @@ def lista_leitos():
     
     # buscamos os leitos e quem está neles
     cursor.execute("""
-        SELECT l.*, b.nome as nome_bebe, b.data_nascimento, r.nome as nome_mae
+        SELECT l.*, q.numero_quarto, b.nome as nome_bebe, b.data_nascimento, r.nome as nome_mae
         FROM Leito l
-        LEFT JOIN Bebe b ON l.id_leito = b.id_leito
+        JOIN Quarto q ON l.id_quarto = q.id_quarto
+        LEFT JOIN Bebe b ON l.id_leito = b.id_leito AND b.status = 'Ativo'
         LEFT JOIN Responsavel_Bebe rb ON b.id_bebe = rb.id_bebe AND rb.parentesco = 'Mãe'
         LEFT JOIN Responsavel r ON rb.id_responsavel = r.id_responsavel
+        ORDER BY q.numero_quarto, l.numero_berco
     """)
     leitos = cursor.fetchall()
     conn.close()
 
-    # conta quantos leitos têm um bebê
     total_ocupados = sum(1 for leito in leitos if leito['nome_bebe'])
-    
-    # O restante é disponível
     total_disponiveis = len(leitos) - total_ocupados
 
     return render_template('bercario.html', 

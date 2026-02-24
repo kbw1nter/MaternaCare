@@ -132,6 +132,9 @@ INSERT INTO Evolucao_Clinica (id_bebe, id_funcionario, descricao, peso_atual) VA
 INSERT INTO Bebe (nome, data_nascimento, peso_nascimento, altura_nascimento, id_leito, status) 
 VALUES ('Bebê Prematuro (Teste)', NOW(), 2.100, 42.0, 9, 'Ativo');
 
+-- vínculo do bebê prematuro (digamos que é gêmeo da Julia ou filho da mesma mãe para teste)
+INSERT INTO Responsavel_Bebe (id_responsavel, id_bebe, parentesco) VALUES (1, 2, 'Mãe');
+
 -- consultas de exemplo
 
 -- consulta 1: listagem simples de bebês
